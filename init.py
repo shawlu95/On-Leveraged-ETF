@@ -61,7 +61,7 @@ def Simulate_Path(deltas):
         }, ignore_index = True)
     return df
 
-def Plot_3(df, keys, xlabel = None, ylabel = None, title = None, save_path = None):
+def Plot_3(df, keys, xlabel = None, ylabel = None, title = None, save = False):
     plt.figure(figsize=(12, 6))
     for key in keys:
         plt.plot(df[key].values)
@@ -76,5 +76,5 @@ def Plot_3(df, keys, xlabel = None, ylabel = None, title = None, save_path = Non
     if ylabel != None:
         plt.title(title)
         
-    if save_path != None:
-        plt.savefig(save_path)
+    if save:
+        plt.savefig(os.path.join(cwd, "fig", "%s.png"%ylabel))
