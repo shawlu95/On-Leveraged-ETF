@@ -41,7 +41,7 @@ def Simulate_Path(deltas, fund = 100, margin = 3, leverage = 3):
         nxt_l = df.iloc[-1][key_mrg] * (1 + delta)
         net_m = nxt_l - fund * (margin + 1)
 
-        # portfolio worth on next day, with 3x leverage
+        # portfolio worth on next day, with leverage
         nxt_p = df.iloc[-1][key_lvg] * (1 + leverage * delta)
         net_l = nxt_p - fund
 
