@@ -2,69 +2,73 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
-fund = 100
-leverage = 3
+from datetime import datetime
 
 key_delt = "Del (%)"
 
 # portfolio worth
-key_norm = "Nrm"
-key_3xn = "3x"
+key_nrm = "Nrm"
+key_mrg = "Mrg"
 key_lvg = "Lvg"
 
 # percentage gain
-key_pctn = "Nrm (pct)"
-key_pct3 = "3x (pct)"
-key_lvgp = "Lvg (pct)"
+key_pctn = key_nrm + " (%)"
+key_pctm = key_mrg + " (%)"
+key_pctl = key_lvg + " (%)"
 
 # dollar gain
-key_netn = "Nrm (USD)"
-key_net3 = "3x (USD)"
-key_netl = "Lvg (USD)"
+key_netn = key_nrm + " ($)"
+key_netm = key_mrg + " ($)"
+key_netl = key_lvg + " ($)"
 
-def Simulate_Path(deltas):
+def Simulate_Path(deltas, fund = 100, margin = 3, leverage = 3):
     df = pd.DataFrame(columns = [key_delt,
-                                 key_norm, key_netn, key_pctn, 
-                                 key_3xn, key_net3, key_pct3,
-                                 key_lvg, key_netl, key_lvgp])
+                                 key_nrm, key_netn, key_pctn, 
+                                 key_mrg, key_netm, key_pctm,
+                                 key_lvg, key_netl, key_pctl])
     df = df.append({
-            key_norm : fund,
-            key_3xn : fund * leverage,
+            key_nrm : fund,
+            key_mrg : fund * (margin + 1),
             key_lvg : fund
         },ignore_index = True)
 
     for delta in deltas:
         # portfolio worth on next day, without leverage
-        nxt_n = df.iloc[-1][key_norm] * (1 + delta)
-        
-        # portfolio worth on next day, with three times fund
-        nxt_l = df.iloc[-1][key_3xn] * (1 + delta)
-        
+        nxt_n = df.iloc[-1][key_nrm] * (1 + delta)
+        net_n = nxt_n - fund
+
+        # portfolio worth on next day, buying on margin
+        nxt_l = df.iloc[-1][key_mrg] * (1 + delta)
+        net_m = nxt_l - fund * (margin + 1)
+
         # portfolio worth on next day, with 3x leverage
         nxt_p = df.iloc[-1][key_lvg] * (1 + leverage * delta)
-        
+        net_l = nxt_p - fund
+
         df = df.append({
             key_delt : 100 * delta,
             
-            key_norm : nxt_n,
-            key_netn : nxt_n - fund,
-            key_pctn : 100 * (nxt_n - fund) / fund,
+            key_nrm : nxt_n,
+            key_netn : net_n,
+            key_pctn : 100 * net_n / fund,
             
-            key_3xn : nxt_l,
-            key_net3 : nxt_l - fund * leverage,
-            key_pct3 : 100 * (nxt_l - fund * leverage) / (fund * leverage),
+            key_mrg : nxt_l,
+            key_netm : net_m,
+            key_pctm : 100 * net_m / fund,
             
             key_lvg : nxt_p,
-            key_netl : nxt_p - fund,
-            key_lvgp : 100 * (nxt_p - fund) / fund 
+            key_netl : net_l,
+            key_pctl : 100 * net_l / fund 
         }, ignore_index = True)
     return df
 
 def Plot_3(df, keys, xlabel = None, ylabel = None, title = None, save = False):
     plt.figure(figsize=(12, 6))
+    x_vals = [datetime.strptime(dt, "%Y-%m-%d") for dt in df.index.values]
     for key in keys:
-        plt.plot(df[key].values)
+        plt.plot(x_vals, df[key].values)
+    
+    plt.plot(x_vals, [0] * len(x_vals), 'r--', alpha = 0.5)
     plt.legend(keys)
     
     if xlabel != None:
