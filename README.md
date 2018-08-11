@@ -17,7 +17,9 @@ The main difference in calculating strategies 2 and 3 is that strategy 2 follows
 THe three strategies were compared on the basis of $10,000 starting fund, a 3 times leverage and a 200% margin. Two different entry time yielded completely different outcomes. 
 
 ![Result](fig/2009_2018.png)
+
 Starting in 2009 immediately after the financial meltdown, S&P 500 consistently rose, whose percentage gain was magnified by the leveraged ETF. By 2018, leveraged ETF has delivered a $120,000 net dollar gain.
 
 ![Result](fig/2008_2018.png)
+
 If the time window starts one year earlier, then leveraged ETF delivered the worst performance among the three. Strategies 1 and 2 recovered loss at around 2013, whereas strategy 3 failed to recover until 2017.
